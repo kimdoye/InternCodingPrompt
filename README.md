@@ -1,107 +1,70 @@
-# Intern Coding Prompt: Flask to FastAPI Migration
+# Intern Coding Prompt: Task Management API (FastAPI)
 
 ## Overview
 
-This repository contains a simple Flask application with CRUD (Create, Read, Update, Delete) operations for a task management API. Your task is to migrate this application from Flask to FastAPI, utilizing modern package management with `uv`, and ensure it is properly containerized with Docker.
+This repository contains a FastAPI application that provides a CRUD (Create, Read, Update, Delete) API for task management. This project was migrated from Flask to FastAPI to utilize modern Python features, Pydantic for data validation, and `uv` for high-performance package management.
 
-## Current Application
+## Features
 
-The existing Flask application (`app.py`) provides a task management API with the following endpoints:
+- **FastAPI Framework:** High performance, easy to use, and automatic OpenAPI documentation.
+- **Pydantic Validation:** Strict data typing and validation for request and response models.
+- **`uv` Package Management:** Fast and reliable dependency resolution and environment management.
+- **In-Memory Storage:** Efficient task storage using Python dictionaries.
+- **Comprehensive Testing:** Robust unit test suite ensuring API stability.
+
+## API Endpoints
 
 - **GET /tasks** - Retrieve all tasks
-- **GET /tasks/<task_id>** - Retrieve a specific task by ID
+- **GET /tasks/{task_id}** - Retrieve a specific task by ID
 - **POST /tasks** - Create a new task
-- **PUT /tasks/<task_id>** - Update an existing task
-- **DELETE /tasks/<task_id>** - Delete a task
+- **PUT /tasks/{task_id}** - Update an existing task
+- **DELETE /tasks/{task_id}** - Delete a task
 - **GET /health** - Health check endpoint
 
-The application uses in-memory storage (a Python dictionary) to store tasks. Each task has the following fields:
-- `id` (UUID)
-- `title` (string)
-- `description` (string)
-- `completed` (boolean)
-- `created_at` (ISO timestamp)
-- `updated_at` (ISO timestamp, only on updates)
+## Getting Started
 
-## Your Task
-
-You need to complete the following tasks:
-
-### 1. Convert Flask to FastAPI
-
-Migrate the Flask application to FastAPI while maintaining the same functionality and API contract. Consider the following:
-
-- Use FastAPI's dependency injection system
-- Implement proper request/response models using Pydantic
-- Use FastAPI's automatic OpenAPI documentation
-- Maintain the same endpoint paths and behavior
-- Use async/await where appropriate
-- Implement proper error handling with FastAPI's exception handlers
-
-### 2. Modernize Package Management with `uv`
-
-The project already uses `pyproject.toml` for package management. Continue using `uv` for package management:
-
-- Install dependencies using `uv sync`
-- Add new dependencies using `uv add <package>`
-- Remove dependencies using `uv remove <package>`
-- Run the application using `uv run python app.py`
-- Document the setup process in the README
-
-### 3. Containerize with Docker
-
-Update the Dockerfile to work with the new FastAPI application:
-
-- Use an appropriate Python base image (prefer slim variants)
-- Install `uv` and use it for dependency management
-- Copy the `pyproject.toml` and lock files
-- Install dependencies using `uv sync`
-- Expose the appropriate port (FastAPI defaults to 8000)
-- Use a production-grade ASGI server like `uvicorn`
-- Optimize the Docker image for size (multi-stage builds if needed)
-
-### 4. Maintain CRUD Operations
-
-Ensure all four CRUD operations are properly implemented in FastAPI:
-
-- **Create**: POST /tasks
-- **Read**: GET /tasks and GET /tasks/<task_id>
-- **Update**: PUT /tasks/<task_id>
-- **Delete**: DELETE /tasks/<task_id>
-
-### 5. Setup GitHub Actions
-
-Setup a GitHub Actions workflow to run unit tests with code coverage reporting on push and pull request.
-
-## Requirements
+### Prerequisites
 
 - Python 3.11 or higher
-- FastAPI
-- uv for package management
-- Docker for containerization
-- Pydantic for data validation
-- Uvicorn (or similar ASGI server)
+- [uv](https://github.com/astral-sh/uv) installed on your system
 
-## Deliverables
+### Installation
 
-1. Updated `app.py` - FastAPI application
-2. `pyproject.toml` - Project configuration and dependencies (already created)
-3. Updated `Dockerfile` - Container configuration
-4. Updated `README.md` - Clear instructions on how to run the application
-5. `.github/workflows/test.yml` - GitHub Actions workflow to run unit tests with code coverage reporting on push and pull request
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd intern-coding-prompt
+    ```
 
-## Submission
+2.  **Sync dependencies:**
+    Use `uv` to create a virtual environment and install all dependencies:
+    ```bash
+    uv sync
+    ```
 
-See [`SUBMISSIONS.md`](./SUBMISSIONS.md) for instructions on how to fork the repository and submit your completed exercise.
+### Running the Application
 
-## Testing Your Implementation
+Start the FastAPI application using `uv`:
 
-After completing the migration, verify your implementation by:
+```bash
+uv run uvicorn app:app --host 0.0.0.0 --port 5000 --reload
+```
 
-1. Starting the application locally using `uv run uvicorn app:app --reload`
-2. Testing each endpoint using `curl` or a tool like Postman
-3. Building and running the Docker container
-4. Verifying the automatic OpenAPI documentation at `/docs` or `/openapi.json`
+The API will be available at `http://localhost:5000`.
+
+### API Documentation
+
+Once the application is running, you can access the interactive API documentation at:
+- **Swagger UI:** `http://localhost:5000/docs`
+- **ReDoc:** `http://localhost:5000/redoc`
+
+## Running Tests
+
+To run the unit test suite and ensure everything is working correctly:
+
+```bash
+uv run pytest
+```
 
 ## Example API Usage
 
@@ -109,7 +72,7 @@ After completing the migration, verify your implementation by:
 # Create a task
 curl -X POST http://localhost:5000/tasks \
   -H "Content-Type: application/json" \
-  -d '{"title": "Complete migration", "description": "Migrate Flask to FastAPI"}'
+  -d '{"title": "Complete Step 2", "description": "Update README with uv instructions"}'
 
 # Get all tasks
 curl http://localhost:5000/tasks
@@ -129,33 +92,38 @@ curl -X DELETE http://localhost:5000/tasks/{task_id}
 curl http://localhost:5000/health
 ```
 
-## Additional Considerations
+## Project Structure
 
-- Think about data validation and error handling
-- Consider adding input validation using Pydantic models
-- Think about potential improvements (e.g., database integration, authentication)
-- Document any assumptions or design decisions you make
-- Ensure the Docker image is optimized for production use
+```text
+.
+├── api/                # FastAPI application logic
+│   ├── controllers.py  # Business logic and CRUD handlers
+│   ├── models.py       # Pydantic schemas (Request/Response)
+│   └── routes.py       # API route definitions
+├── tests/              # Legacy unit tests (untouched)
+├── app.py              # Application entry point & Compatibility layer
+├── Dockerfile          # Multi-stage production Docker build
+├── pyproject.toml      # Project dependencies and metadata
+└── .github/            # GitHub Actions CI workflow
+```
 
-## Getting Started
+## CI/CD
 
-1. Clone this repository
-2. Review the existing Flask application in `app.py`
-3. Review the current `Dockerfile`
-4. **Important: Do not edit the unit tests in the `tests/` directory** - these tests must continue to pass after your migration
-5. Begin your migration to FastAPI
-6. Run the unit tests to ensure your implementation is correct: `uv run pytest`
-7. Test your implementation thoroughly
-8. Update the README with any additional instructions
+This project uses **GitHub Actions** for continuous integration. On every push or pull request to the `main` or `master` branches, the workflow:
+1. Sets up a Python 3.12 environment.
+2. Installs dependencies using `uv`.
+3. Runs the full test suite with `pytest`.
+4. Generates a code coverage report using `pytest-cov`.
 
-## Unit Tests
+## Docker Support
 
-The repository includes a comprehensive suite of unit tests in the `tests/` directory. These tests verify the functionality of all CRUD operations and the health check endpoint.
+The project is containerized using a high-performance **multi-stage Docker build**:
+- **Builder stage:** Uses the `uv` image to resolve dependencies and build the virtual environment.
+- **Runtime stage:** Uses a slim Python 3.12 image to host the application, resulting in a minimized production image size.
 
-**Important:** Do not modify the unit tests. Your FastAPI implementation must pass all existing tests to ensure API compatibility and functionality.
+To build and run the application in a container:
 
-To run the tests:
 ```bash
-uv sync --dev
-uv run pytest
+docker build -t task-api .
+docker run -p 5000:5000 task-api
 ```
