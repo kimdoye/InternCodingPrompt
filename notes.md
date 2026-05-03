@@ -39,5 +39,22 @@ A major challenge was the requirement to **not modify existing tests**, which we
 - **Image Optimization:** Added a `.dockerignore` file to exclude unnecessary files (`.venv`, `tests/`, documentation), resulting in a significantly smaller production image.
 - **Configuration:** Exposed port 5000 and configured the container to run the application via `python app.py` (which invokes uvicorn).
 
+## Step 4: Maintain CRUD Operations
+**Status: Completed**
+
+### Verification
+- **Test Integrity:** Confirmed that all four CRUD operations (Create, Read, Update, Delete) are fully functional through the FastAPI implementation.
+- **Contract Fidelity:** Verified that the API responses, status codes, and JSON schemas remain 100% compatible with the original Flask application, as evidenced by the 13 passing unit tests in `tests/test_app.py`.
+- **Validation:** Implemented Pydantic models to provide robust data validation, improving upon the original Flask implementation while maintaining compatibility.
+
+## Step 5: Setup GitHub Actions
+**Status: Completed**
+
+### CI/CD Implementation
+- **Workflow Automation:** Created `.github/workflows/test.yml` to automatically run tests on every push and pull request.
+- **`uv` Optimization:** Configured the workflow to use `astral-sh/setup-uv` for fast environment setup and dependency caching.
+- **Code Coverage:** Integrated `pytest-cov` to generate code coverage reports. The workflow outputs a summary to the console and generates an XML report for external tracking.
+- **Python Compatibility:** Configured the CI to run on Python 3.12 to ensure the codebase remains modern and compatible.
+
 ---
-*Next Step: Setup GitHub Actions for CI and coverage.*
+*All migration steps are now complete.*
