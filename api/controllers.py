@@ -1,6 +1,7 @@
 import uuid
-from datetime import datetime
-from flask import jsonify, request
+from datetime import datetime, UTC
+from fastapi import HTTPException
+from .models import Task, TaskCreate, TaskUpdate
 
 # In-memory storage for tasks
 tasks = {}
@@ -8,71 +9,62 @@ tasks = {}
 
 def get_tasks():
     """Read: Get all tasks"""
-    return jsonify(list(tasks.values())), 200
+    return list(tasks.values())
 
 
-def get_task(task_id):
+def get_task(task_id: str):
     """Read: Get a specific task by ID"""
     task = tasks.get(task_id)
     if task:
-        return jsonify(task), 200
-    return jsonify({"error": "Task not found"}), 404
+        return task
+    raise HTTPException(status_code=404, detail={"error": "Task not found"})
 
 
-def create_task():
+def create_task(task_in: TaskCreate):
     """Create: Create a new task"""
-    data = request.get_json(silent=True)
-
-    if data is None or "title" not in data:
-        return jsonify({"error": "Title is required"}), 400
-
     task_id = str(uuid.uuid4())
     task = {
         "id": task_id,
-        "title": data["title"],
-        "description": data.get("description", ""),
+        "title": task_in.title,
+        "description": task_in.description or "",
         "completed": False,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
     }
 
     tasks[task_id] = task
-    return jsonify(task), 201
+    return task
 
 
-def update_task(task_id):
+def update_task(task_id: str, task_in: TaskUpdate):
     """Update: Update an existing task"""
     task = tasks.get(task_id)
     if not task:
-        return jsonify({"error": "Task not found"}), 404
-
-    data = request.get_json(silent=True)
-    if data is None:
-        return jsonify({"error": "No data provided"}), 400
+        raise HTTPException(status_code=404, detail={"error": "Task not found"})
 
     # Update task fields
-    if "title" in data:
-        task["title"] = data["title"]
-    if "description" in data:
-        task["description"] = data["description"]
-    if "completed" in data:
-        task["completed"] = data["completed"]
+    if task_in.title is not None:
+        task["title"] = task_in.title
+    if task_in.description is not None:
+        task["description"] = task_in.description
+    if task_in.completed is not None:
+        task["completed"] = task_in.completed
 
-    task["updated_at"] = datetime.utcnow().isoformat()
+    task["updated_at"] = datetime.now(UTC).isoformat()
     tasks[task_id] = task
 
-    return jsonify(task), 200
+    return task
 
 
-def delete_task(task_id):
+def delete_task(task_id: str):
     """Delete: Delete a task"""
     task = tasks.get(task_id)
     if not task:
-        return jsonify({"error": "Task not found"}), 404
+        raise HTTPException(status_code=404, detail={"error": "Task not found"})
 
     del tasks[task_id]
-    return jsonify({"message": "Task deleted successfully"}), 200
+    return {"message": "Task deleted successfully"}
 
 
 def health():
     """Health check endpoint"""
-    return jsonify({"status": "healthy"}), 200
+    return {"status": "healthy"}
