@@ -9,7 +9,7 @@
 - **In-Memory Storage:** Maintained the existing dictionary-based storage in `api/controllers.py` to ensure consistency with the original exercise.
 - **Asynchronous Flow:** While the current implementation uses synchronous controllers (matching the Flask original), the routes are prepared for async integration.
 
-### Compatibility Layer (The "Magic")
+### Compatibility Layer
 A major challenge was the requirement to **not modify existing tests**, which were written for Flask. I implemented a compatibility shim in `app.py`:
 - `FlaskCompatibleClient`: A wrapper around FastAPI's `TestClient` that filters out Flask-specific arguments like `content_type` and mimics the context manager behavior of Flask's test client.
 - `FlaskCompatibleResponse`: A wrapper that provides the `.data` attribute (returning bytes) and `.json` property expected by the legacy tests.
@@ -55,3 +55,6 @@ A major challenge was the requirement to **not modify existing tests**, which we
 - **`uv` Optimization:** Configured the workflow to use `astral-sh/setup-uv` for fast environment setup and dependency caching.
 - **Code Coverage:** Integrated `pytest-cov` to generate code coverage reports. The workflow outputs a summary to the console and generates an XML report for external tracking.
 - **Python Compatibility:** Configured the CI to run on Python 3.12 to ensure the codebase remains modern and compatible.
+
+---
+*All steps complete.*
