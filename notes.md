@@ -55,6 +55,3 @@ A major challenge was the requirement to **not modify existing tests**, which we
 - **`uv` Optimization:** Configured the workflow to use `astral-sh/setup-uv` for fast environment setup and dependency caching.
 - **Code Coverage:** Integrated `pytest-cov` to generate code coverage reports. The workflow outputs a summary to the console and generates an XML report for external tracking.
 - **Python Compatibility:** Configured the CI to run on Python 3.12 to ensure the codebase remains modern and compatible.
-
----
-*All migration steps are now complete.*
