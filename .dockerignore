@@ -1,0 +1,14 @@
+.venv
+__pycache__
+.git
+.pytest_cache
+*.pyc
+*.pyo
+*.pyd
+.db
+.env
+tests/
+README.md
+notes.md
+GEMINI.md
+SUBMISSIONS.md

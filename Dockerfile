@@ -1,20 +1,43 @@
-FROM astral/uv:latest AS uv_builder
+# Use a specific Python version for reproducibility
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
-FROM python:3.11-slim
+# Set the working directory
+WORKDIR /app
+
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
+
+# Copy only requirements to cache them in a separate layer
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies without the project itself to cache them
+# This ensures that changes to source code don't trigger a full re-install
+RUN uv sync --frozen --no-install-project --no-dev
+
+# Copy the rest of the application source code
+COPY . .
+
+# Install the project (this will be fast since dependencies are already cached)
+RUN uv sync --frozen --no-dev
+
+# Final runtime image: use a slim version for production
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-COPY --from=uv_builder /uv /uvx /bin/
+# Copy the virtual environment from the builder stage
+COPY --from=builder /app/.venv /app/.venv
 
+# Copy the application source code
 COPY . .
 
-# Create virtual environment and add it to PATH
-ENV UV_PROJECT_ENVIRONMENT=/opt/venv
-RUN python3 -m venv $UV_PROJECT_ENVIRONMENT
-ENV PATH="$UV_PROJECT_ENVIRONMENT/bin:$PATH"
+# Set environment variables to use the virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-RUN uv sync --locked
-
+# Expose the port the app runs on
 EXPOSE 5000
 
+# Run the application using the entry point in app.py
 CMD ["python", "app.py"]
